@@ -98,18 +98,24 @@ import java.util.List;
 @RequestMapping("/api")
 public class MemoController {
 
-    //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
+
+   //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
     private final MemoService memoService;
+    //제어의 역전 코드 변경
+//
+//    public MemoController(JdbcTemplate jdbcTemplate) { //jdbcTemplate 초기화하는 생성자
+//        //this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
+//
+//        /**
+//         * 메서드마다 중복되어 존재하는
+//         *         MemoService memoService = new MemoService(jdbcTemplate); //인스턴스화
+//         * 코드를 여기서 한번에 주입
+//         */
+//        this.memoService = new MemoService(jdbcTemplate);
+//    }
 
-    public MemoController(JdbcTemplate jdbcTemplate) { //jdbcTemplate 초기화하는 생성자
-        //this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
-
-        /**
-         * 메서드마다 중복되어 존재하는
-         *         MemoService memoService = new MemoService(jdbcTemplate); //인스턴스화
-         * 코드를 여기서 한번에 주입
-         */
-        this.memoService = new MemoService(jdbcTemplate);
+    public MemoController(MemoService memoService) { //만들어진 서비스만 받아와서 필드에 주입
+        this.memoService = memoService;
     }
 
     @PostMapping("/memos")

@@ -13,16 +13,24 @@ public class MemoService {
     //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
     private final MemoRepository memoRepository;
 
-    //생성자
-    public MemoService(JdbcTemplate jdbcTemplate) { //jdbcTemplate 초기화하는 생성자
-        //this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
-        /**
-         *  각 메서드 앞에 있는
-         *  MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
-         *  를 여기서 한번만 주입받고 중복코드 지워준다.
-         */
-        this.memoRepository = new MemoRepository(jdbcTemplate);
+        //제어의 역전 코드 변경 (약한 결합)
+//    //생성자
+//    public MemoService(JdbcTemplate jdbcTemplate) { //jdbcTemplate 초기화하는 생성자
+//        //this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
+//        /**
+//         *  각 메서드 앞에 있는
+//         *  MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
+//         *  를 여기서 한번만 주입받고 중복코드 지워준다.
+//         */
+//        this.memoRepository = new MemoRepository(jdbcTemplate);
+//    }
+
+    public MemoService(MemoRepository memoRepository) { //memoRepository를 데려와서 필드에 주입
+        this.memoRepository = memoRepository;
     }
+
+
+
 
     public MemoResponseDto createMemo(MemoRequestDto requestDto) {
 
