@@ -10,10 +10,18 @@ import java.util.List;
 
 public class MemoService {
 
-    private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
+    //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
+    private final MemoRepository memoRepository;
 
+    //생성자
     public MemoService(JdbcTemplate jdbcTemplate) { //jdbcTemplate 초기화하는 생성자
-        this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
+        //this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
+        /**
+         *  각 메서드 앞에 있는
+         *  MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
+         *  를 여기서 한번만 주입받고 중복코드 지워준다.
+         */
+        this.memoRepository = new MemoRepository(jdbcTemplate);
     }
 
     public MemoResponseDto createMemo(MemoRequestDto requestDto) {
@@ -22,7 +30,7 @@ public class MemoService {
         Memo memo = new Memo(requestDto);
 
         // DB 저장
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
+        //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         Memo saveMemo = memoRepository.save(memo);
 
         //리포지토리로 이관
@@ -50,7 +58,7 @@ public class MemoService {
 
     public List<MemoResponseDto> getMemos() {
         // DB 조회
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
+        //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         return memoRepository.findAll();
 
         //리포지토리로 이관
@@ -76,7 +84,7 @@ public class MemoService {
 
     public Long updateMemo(Long id, MemoRequestDto requestDto) {
 
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
+        //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         // 해당 메모가 DB에 존재하는지 확인
         Memo memo = memoRepository.findById(id);
         if(memo != null) {
@@ -113,7 +121,7 @@ public class MemoService {
 //    }
 
     public Long deleteMemo(Long id) {
-        MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
+        //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         // 해당 메모가 DB에 존재하는지 확인
         Memo memo = memoRepository.findById(id);
                 // 해당 메모가 DB에 존재하는지 확인
