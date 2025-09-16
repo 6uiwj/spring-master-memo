@@ -4,14 +4,39 @@ import com.sparta.memo.dto.MemoRequestDto;
 import com.sparta.memo.dto.MemoResponseDto;
 import com.sparta.memo.entity.Memo;
 import com.sparta.memo.repository.MemoRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class MemoService {
 
-    //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
     private final MemoRepository memoRepository;
+
+//    //1. "Bean" 이름으로 가져오기
+//    public MemoService(ApplicationContext context) {
+//        //1. 'Bean'의 이름으로 가져오기
+//        MemoRepository memoRepository = (MemoRepository) context.getBean("memoRepository");
+//        this.memoRepository = memoRepository;
+//    }
+
+//    //2.  Bean 클래스 형식으로 가져오기
+//    public MemoService(ApplicationContext context) {
+//        MemoRepository memoRepository = context.getBean(MemoRepository.class);
+//        this.memoRepository = memoRepository;
+//    }
+
+//    //메서드로 의존 주입
+//    @Autowired
+//    public void setDi(MemoRepository memoRepository) {
+//        this.memoRepository = memoRepository;
+//    }
+
+    //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
+    //private final MemoRepository memoRepository;
 
         //제어의 역전 코드 변경 (약한 결합)
 //    //생성자
