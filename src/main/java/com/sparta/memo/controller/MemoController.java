@@ -229,4 +229,10 @@ public class MemoController {
 //            }
 //        }, id);
 //    }
+
+    @GetMapping("/memos/contents")
+    public List<MemoResponseDto> getMemosByKeyword (@RequestParam (required = false) String keyword) {
+        return memoService.getMemosByKeyword(keyword);
+
+    }
 }

@@ -46,8 +46,8 @@ public class MemoService {
 //         *  를 여기서 한번만 주입받고 중복코드 지워준다.
 //         */
 //        this.memoRepository = new MemoRepository(jdbcTemplate);
-//    }
 
+//    }
     public MemoService(MemoRepository memoRepository) { //memoRepository를 데려와서 필드에 주입
         this.memoRepository = memoRepository;
     }
@@ -114,6 +114,11 @@ public class MemoService {
 //        });
     }
 
+    public List<MemoResponseDto> getMemosByKeyword(String keyword) {
+        return memoRepository.findAllByContentsContainingOrderByModifiedAtDesc(keyword)
+                .stream().map(MemoResponseDto::new).toList();
+    }
+
     @Transactional //변경 감지
     public Long updateMemo(Long id, MemoRequestDto requestDto) {
 
@@ -134,7 +139,6 @@ public class MemoService {
 //            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
 //        }
     }
-
     //리포지토리로 이관
 //    //Update와 Delete의 중복 코드를 따로 빼서 관리
 //    //데이터베이스에 존재하는지 확인하는 코드
@@ -152,8 +156,8 @@ public class MemoService {
 //                return null; //데이터가 없으면 Null 반환
 //            }
 //        }, id);
-//    }
 
+//    }
     public Long deleteMemo(Long id) {
         //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         // 해당 메모가 DB에 존재하는지 확인
@@ -166,6 +170,7 @@ public class MemoService {
 
     }
     //공통부분 - 메모 조회
+
     private Memo findMemo(Long id) {
         return memoRepository.findById(id).orElseThrow(() -> //null check
                 new IllegalArgumentException("선택한 메모는 존재하지 않습니다.")
