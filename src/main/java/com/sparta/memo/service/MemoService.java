@@ -91,7 +91,7 @@ public class MemoService {
         //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         //return memoRepository.findAll();
 
-        return memoRepository.findAll().stream().map(MemoResponseDto::new).toList();
+        return memoRepository.findAllByOrderByModifiedAtDesc().stream().map(MemoResponseDto::new).toList();
 
         //리포지토리로 이관
 //        String sql = "SELECT * FROM memo";
