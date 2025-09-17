@@ -5,6 +5,7 @@ import com.sparta.memo.dto.MemoResponseDto;
 import com.sparta.memo.entity.Memo;
 import com.sparta.memo.repository.MemoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class MemoService {
     //private final JdbcTemplate jdbcTemplate; //final 이니 초기화 필요 -> 생성자
     //private final MemoRepository memoRepository;
 
-        //제어의 역전 코드 변경 (약한 결합)
+    //제어의 역전 코드 변경 (약한 결합)
 //    //생성자
 //    public MemoService(JdbcTemplate jdbcTemplate) { //jdbcTemplate 초기화하는 생성자
 //        //this.jdbcTemplate = jdbcTemplate; //JdbcTemplate을 받아온 다음에 주입하여 초기화
@@ -50,8 +51,6 @@ public class MemoService {
     public MemoService(MemoRepository memoRepository) { //memoRepository를 데려와서 필드에 주입
         this.memoRepository = memoRepository;
     }
-
-
 
 
     public MemoResponseDto createMemo(MemoRequestDto requestDto) {
@@ -84,12 +83,15 @@ public class MemoService {
         // Entity -> ResponseDto
         MemoResponseDto memoResponseDto = new MemoResponseDto(memo);
 
-        return memoResponseDto;    }
+        return memoResponseDto;
+    }
 
     public List<MemoResponseDto> getMemos() {
         // DB 조회
         //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
-        return memoRepository.findAll();
+        //return memoRepository.findAll();
+
+        return memoRepository.findAll().stream().map(MemoResponseDto::new).toList();
 
         //리포지토리로 이관
 //        String sql = "SELECT * FROM memo";
@@ -112,23 +114,25 @@ public class MemoService {
 //        });
     }
 
+    @Transactional //변경 감지
     public Long updateMemo(Long id, MemoRequestDto requestDto) {
 
         //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         // 해당 메모가 DB에 존재하는지 확인
-        Memo memo = memoRepository.findById(id);
-        if(memo != null) {
-            // memo 내용 수정
+        Memo memo = findMemo(id);
 
-            memoRepository.update(id, requestDto);
-            //리포지토리로 이관
+        // if(memo != null) {
+        // memo 내용 수정
+
+        memo.update(requestDto);
+        //리포지토리로 이관
 //            String sql = "UPDATE memo SET username = ?, contents = ? WHERE id = ?";
 //            jdbcTemplate.update(sql, requestDto.getUsername(), requestDto.getContents(), id);
 
-            return id;
-        } else {
-            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
-        }
+        return id;
+//        } else {
+//            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
+//        }
     }
 
     //리포지토리로 이관
@@ -153,18 +157,18 @@ public class MemoService {
     public Long deleteMemo(Long id) {
         //MemoRepository memoRepository = new MemoRepository(jdbcTemplate);
         // 해당 메모가 DB에 존재하는지 확인
-        Memo memo = memoRepository.findById(id);
-                // 해당 메모가 DB에 존재하는지 확인
-        if(memo != null) {
-            memoRepository.delete(id);
-            //리포지토리로 이관
-//            // memo 삭제
-//            String sql = "DELETE FROM memo WHERE id = ?";
-//            jdbcTemplate.update(sql, id);
+        Memo memo = findMemo(id);
 
-            return id;
-        } else {
-            throw new IllegalArgumentException("선택한 메모는 존재하지 않습니다.");
-        }
+        //메모 삭제
+        memoRepository.delete(memo);
+        return id;
+
+
+    }
+    //공통부분 - 메모 조회
+    private Memo findMemo(Long id) {
+        return memoRepository.findById(id).orElseThrow(() -> //null check
+                new IllegalArgumentException("선택한 메모는 존재하지 않습니다.")
+        );
     }
 }
